@@ -1,11 +1,38 @@
 :root {
+  color-scheme: light dark;
   --accent: #1b5d49;
+  --accent-contrast: #ffffff;
   --background: #f7f8f4;
   --border: #d9ddd6;
-  --muted: #68756d;
+  --border-strong: #8d9a92;
+  --muted: #5d6962;
+  --text-muted: var(--muted);
   --surface: #ffffff;
+  --surface-alt: #f4f1e8;
+  --surface-soft: #f6f8f6;
+  --selected-bg: #e6f0ef;
+  --selected-fg: #164438;
   --text: #34423a;
   --text-strong: #101712;
+  --focus: #1b5d49;
+  --st-match-bg: #e1f5e5;
+  --st-match-fg: #1d5a2c;
+  --st-match-border: #2f8a47;
+  --st-partial-bg: #fff4cf;
+  --st-partial-fg: #6b4a00;
+  --st-partial-border: #b88500;
+  --st-transferable-bg: #e3eefc;
+  --st-transferable-fg: #1f4a80;
+  --st-transferable-border: #3d74b8;
+  --st-hidden-bg: #efe6fb;
+  --st-hidden-fg: #53307f;
+  --st-hidden-border: #7d55b3;
+  --st-gap-bg: #eef0f1;
+  --st-gap-fg: #3f4a50;
+  --st-gap-border: #6f7c84;
+  --st-risk-bg: #ffe0dd;
+  --st-risk-fg: #8a2a1f;
+  --st-risk-border: #c8483a;
   --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
   color: var(--text);
   background: var(--background);
@@ -16,11 +43,50 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #7fd1b0;
+    --accent-contrast: #0c1310;
+    --background: #0f1512;
+    --border: #34423a;
+    --border-strong: #6d7c73;
+    --muted: #a7b3ab;
+    --surface: #18201c;
+    --surface-alt: #1f2823;
+    --surface-soft: #1c2520;
+    --selected-bg: #21443a;
+    --selected-fg: #d5f5e8;
+    --text: #d5dfd8;
+    --text-strong: #f2f6f3;
+    --focus: #8fe0bf;
+    --st-match-bg: #173923;
+    --st-match-fg: #a8e6b8;
+    --st-match-border: #4fb86c;
+    --st-partial-bg: #3a300f;
+    --st-partial-fg: #f3d98a;
+    --st-partial-border: #c9a232;
+    --st-transferable-bg: #16304f;
+    --st-transferable-fg: #aecdf5;
+    --st-transferable-border: #5d95d8;
+    --st-hidden-bg: #2e2244;
+    --st-hidden-fg: #d6c2f5;
+    --st-hidden-border: #9b7bd0;
+    --st-gap-bg: #283036;
+    --st-gap-fg: #d3dade;
+    --st-gap-border: #8c9aa3;
+    --st-risk-bg: #4a1d18;
+    --st-risk-fg: #ffbdb4;
+    --st-risk-border: #e0695b;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
+  background: var(--background);
+  color: var(--text);
   margin: 0;
   min-width: 320px;
 }
@@ -31,9 +97,16 @@ input {
 }
 
 button:focus-visible,
-label:focus-within {
-  outline: 3px solid rgba(27, 93, 73, 0.25);
+label:focus-within,
+textarea:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 p {

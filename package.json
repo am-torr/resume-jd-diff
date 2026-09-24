@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "pwsh -NoProfile -File scripts/run-app.ps1",
     "dev": "concurrently \"npm:server\" \"npm:client\"",
     "client": "vite",
     "server": "tsx watch server/index.ts",

@@ -1,8 +1,10 @@
-import { AlertTriangle, CheckCircle2, ClipboardCopy, Download, FileText, RefreshCw, ShieldCheck, UploadCloud } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, ClipboardCopy, Download, FileSearch, FileText, RefreshCw, ShieldCheck } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 import './App.css'
 import { compareFiles, isSupportedFile } from './api'
+import { FilePicker } from './FilePicker'
+import { JDDiffWorkspace } from './JDDiff'
 import { downloadHtmlReport } from './report'
 import type { CompareResult, DiffPart, ExtractionConfidence, ExtractedDocument, QualityStatus, RiskCategory, SectionDiff } from './types'
 
@@ -15,6 +17,7 @@ function joinWrappedLines(text: string): string {
 }
 
 type Slot = 'original' | 'revised'
+type Mode = 'resume' | 'jd'
 type ActiveTab = 'summary' | 'sections' | 'diff' | 'risks' | 'export' | 'text'
 type RiskFilter = 'all' | 'critical' | 'warning' | 'info'
 
@@ -35,6 +38,7 @@ const STATUS_ORDER: Record<SectionDiff['status'], number> = {
 }
 
 function App() {
+  const [mode, setMode] = useState<Mode>('resume')
   const [original, setOriginal] = useState<File | null>(null)
   const [revised, setRevised] = useState<File | null>(null)
   const [result, setResult] = useState<CompareResult | null>(null)
@@ -90,24 +94,57 @@ function App() {
     <main className="app-shell">
       <header className="topbar">
         <div>
-          <p className="eyebrow">Local Resume Diff Viewer</p>
-          <h1>Compare resume text without uploading it anywhere.</h1>
+          <p className="eyebrow">{mode === 'resume' ? 'Local Resume Diff Viewer' : 'Local JD Diff'}</p>
+          <h1>
+            {mode === 'resume'
+              ? 'Compare resume text without uploading it anywhere.'
+              : 'Check a resume against a job description, evidence first.'}
+          </h1>
         </div>
         <div className="privacy-badge">
-          <ShieldCheck size={18} />
+          <ShieldCheck size={18} aria-hidden="true" />
           Local only
         </div>
       </header>
 
+      <div className="mode-switch" role="group" aria-label="Comparison mode">
+        <button
+          type="button"
+          className={mode === 'resume' ? 'mode-option active' : 'mode-option'}
+          aria-pressed={mode === 'resume'}
+          onClick={() => setMode('resume')}
+          data-testid="mode-resume-diff"
+        >
+          <FileText size={16} aria-hidden="true" />
+          Resume Diff
+        </button>
+        <button
+          type="button"
+          className={mode === 'jd' ? 'mode-option active' : 'mode-option'}
+          aria-pressed={mode === 'jd'}
+          onClick={() => setMode('jd')}
+          data-testid="mode-jd-diff"
+        >
+          <FileSearch size={16} aria-hidden="true" />
+          JD Diff
+        </button>
+      </div>
+
+      <JDDiffWorkspace hidden={mode !== 'jd'} />
+
+      {mode === 'resume' && (
+      <>
       <section className="workspace">
         <div className="upload-grid">
           <FilePicker
             label="Original"
+            testId="original-upload"
             file={original}
             onChange={(files) => handleFile('original', files)}
           />
           <FilePicker
             label="Revised"
+            testId="revised-upload"
             file={revised}
             onChange={(files) => handleFile('revised', files)}
           />
@@ -163,24 +200,9 @@ function App() {
           <p>Drop in a Word or PDF version on each side. The app will normalize text, detect sections, map heading synonyms, and flag resume-specific risks.</p>
         </section>
       )}
+      </>
+      )}
     </main>
-  )
-}
-
-function FilePicker({ label, file, onChange }: { label: string; file: File | null; onChange: (files: FileList | null) => void }) {
-  return (
-    <label className="file-picker">
-      <input
-        type="file"
-        accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        onChange={(event) => onChange(event.currentTarget.files)}
-        data-testid={label === 'Original' ? 'original-upload' : 'revised-upload'}
-      />
-      <UploadCloud size={24} />
-      <span>{label}</span>
-      <strong>{file ? file.name : 'Choose .docx or .pdf'}</strong>
-      <small>{file ? `${formatBytes(file.size)} selected` : 'Word-to-Word, Word-to-PDF, PDF-to-Word, PDF-to-PDF'}</small>
-    </label>
   )
 }
 
@@ -481,12 +503,6 @@ async function copySummary(result: CompareResult): Promise<void> {
 
 function fileKind(file: File): string {
   return file.name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOCX'
-}
-
-function formatBytes(size: number): string {
-  if (size < 1024) return `${size} B`
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`
 }
 
 function statusClass(status: QualityStatus): string {

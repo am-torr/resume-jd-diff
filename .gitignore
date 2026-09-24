@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local-only files (not for the repo)
+.claude/settings.local.json
+.claude/skills/
+skills-lock.json

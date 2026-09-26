@@ -82,9 +82,15 @@ Switch to **JD Diff** at the top of the app to compare a resume (Input A) with a
 (Input B). Each side accepts an uploaded `.docx`/text-based `.pdf` (same local parser as Resume Diff)
 or pasted text. Every JD requirement is classified as `MATCH`, `PARTIAL`, `TRANSFERABLE`,
 `HIDDEN_MATCH`, `GAP` or `CLAIM_RISK`, with the verbatim resume lines that support it, a reason and a
-suggested action. There is no percentage or ATS score; the summary is counts only. The engine
-(`server/jdDiffEngine.ts`) is local and deterministic. Details: `docs/jd-diff-prd.md` and
-`docs/jd-diff-implementation-report.md`.
+suggested action. There is no percentage or ATS score; the summary is counts only.
+
+## About this repository
+
+This public repository ships a simplified demo engine (`server/resumeEngine.ts`,
+`server/jdDiffEngine.ts`) so the UI, API and launcher run end to end. The production engines
+(section detection, heading-synonym mapping, resume risk rules and layered JD matching) are
+private. With the demo engine, Resume Diff shows a plain word diff and JD Diff marks each
+requirement as `PARTIAL` or `GAP` based on shared keywords.
 
 ## V1 Caveats
 

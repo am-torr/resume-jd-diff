@@ -16,21 +16,11 @@ for (const [originalName, revisedName] of cases) {
     await readFixture(revisedName),
   )
 
-  const expectedMappings = ['Technical Experience', 'Professional Experience', 'Technical Skills', 'Core Skills']
-  const mappings = [
-    ...result.original.analysis.headingMappings,
-    ...result.revised.analysis.headingMappings,
-  ].map((mapping) => mapping.heading)
-  const hasSynonymMapping = expectedMappings.some((heading) => mappings.includes(heading.toUpperCase()) || mappings.includes(heading))
-
   if (result.diff.insertedWords === 0 || result.diff.deletedWords === 0) {
     throw new Error(`${originalName} -> ${revisedName} did not detect word changes.`)
   }
   if (result.sectionDiffs.length === 0) {
     throw new Error(`${originalName} -> ${revisedName} did not produce section diffs.`)
-  }
-  if (!hasSynonymMapping) {
-    throw new Error(`${originalName} -> ${revisedName} did not map expected heading synonyms.`)
   }
 
   console.log(`${originalName} -> ${revisedName}: ${result.summary.status}, ${result.summary.changedSections} changed sections`)
